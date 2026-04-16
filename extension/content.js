@@ -6,7 +6,7 @@
 (function TRACE_EXT() {
   "use strict";
 
-  const API_BASE = "http://89.167.85.103";
+  const API_BASE = "https://nutraceblueapi.xyz";
 
   // Cache: "ACCT1201::Witte Annie" → Promise<rating|null>
   const ratingCache = new Map();

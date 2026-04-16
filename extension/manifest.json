@@ -6,8 +6,7 @@
   "permissions": [],
   "host_permissions": [
     "https://nubanner.neu.edu/*",
-    "http://localhost:8000/*",
-    "http://89.167.85.103/*"
+    "https://nutraceblueapi.xyz/*"
   ],
   "content_scripts": [
     {
