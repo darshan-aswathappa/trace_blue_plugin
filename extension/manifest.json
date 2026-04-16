@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "TRACE Ratings for NUBanner",
+  "version": "1.0.0",
+  "description": "Shows professor TRACE ratings inline on NUBanner course search results",
+  "permissions": [],
+  "host_permissions": [
+    "https://nubanner.neu.edu/*",
+    "http://localhost:8000/*",
+    "http://89.167.85.103/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://nubanner.neu.edu/*"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["https://nubanner.neu.edu/*"],
+      "css": ["styles.css"]
+    }
+  ]
+}

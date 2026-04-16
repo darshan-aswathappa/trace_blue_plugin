@@ -1,0 +1,301 @@
+/* ── TRACE Badge (Light Mode) ─────────────────────────────────────────────── */
+
+/* ── Easing token ─────────────────────────────────────────────────────────── */
+
+:root {
+  --trace-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Keyframes ────────────────────────────────────────────────────────────── */
+
+/* Badge enters the DOM: scale up from 0.75 */
+@keyframes trace-badge-in {
+  from { opacity: 0; transform: scale(0.75); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Loading shimmer: fades between 90% and 30% opacity so it reads as "working" */
+@keyframes trace-pulse {
+  0%, 100% { opacity: 0.9; }
+  50%       { opacity: 0.3; }
+}
+
+/* Score resolves: brief scale pop confirms data arrived */
+@keyframes trace-resolve {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.14); }
+  100% { transform: scale(1); }
+}
+
+/* ── Base Badge ───────────────────────────────────────────────────────────── */
+
+.trace-badge {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: default;
+  vertical-align: middle;
+  white-space: nowrap;
+  user-select: none;
+  line-height: 1.45;
+  background: #f3f4f6;
+  color: #9ca3af;
+  border: 1px solid #e5e7eb;
+  /* Transition handles hover; animation handles entrance and resolve */
+  transition:
+    transform 0.12s var(--trace-ease-out),
+    filter 0.12s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+  animation: trace-badge-in 0.18s var(--trace-ease-out) both;
+  will-change: transform;
+}
+
+/* Hover: lift + slight dim to signal "tooltip incoming" */
+.trace-badge:hover {
+  transform: scale(1.08);
+  filter: brightness(0.9);
+}
+
+/* ── Badge States ─────────────────────────────────────────────────────────── */
+
+/* Entrance plays first, then pulse kicks in after entrance finishes */
+.trace-loading {
+  background: #f9fafb;
+  color: #d1d5db;
+  border-color: #f3f4f6;
+  animation:
+    trace-badge-in 0.18s var(--trace-ease-out) both,
+    trace-pulse 1.4s ease-in-out 0.18s infinite;
+}
+
+/* API returned no data — pop confirms the response, no tooltip interaction */
+.trace-nodata {
+  background: #f9fafb;
+  color: #d1d5db;
+  border-color: #f3f4f6;
+  animation: trace-resolve 0.28s var(--trace-ease-out) both;
+}
+
+.trace-nodata:hover {
+  transform: none;
+  filter: none;
+}
+
+/* Scored badges: pop on resolve; pointer cursor signals tooltip is available */
+.trace-green {
+  background: #f0fdf4;
+  color: #15803d;
+  border-color: #bbf7d0;
+  cursor: pointer;
+  animation: trace-resolve 0.28s var(--trace-ease-out) both;
+}
+
+.trace-amber {
+  background: #fffbeb;
+  color: #b45309;
+  border-color: #fde68a;
+  cursor: pointer;
+  animation: trace-resolve 0.28s var(--trace-ease-out) both;
+}
+
+.trace-red {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+  cursor: pointer;
+  animation: trace-resolve 0.28s var(--trace-ease-out) both;
+}
+
+/* ── Tooltip Shell ────────────────────────────────────────────────────────── */
+
+/*
+ * opacity + visibility instead of display:none so the exit can animate.
+ * position:fixed means it never affects page layout at opacity:0.
+ */
+.trace-tooltip {
+  position: fixed;
+  z-index: 2147483647;
+  width: 240px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px 14px;
+  pointer-events: none;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.08),
+    0 1px 6px rgba(0, 0, 0, 0.05);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  /* Hidden state */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px) scale(0.97);
+  will-change: transform, opacity;
+  /* Exit: visibility delay matches opacity so element stays hit-testable during fade */
+  transition:
+    opacity 0.14s var(--trace-ease-out),
+    transform 0.14s var(--trace-ease-out),
+    visibility 0s linear 0.14s;
+}
+
+/* Visible state — class removal triggers exit transition */
+.trace-tip-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  /* Enter: visibility immediate, no delay */
+  transition:
+    opacity 0.14s var(--trace-ease-out),
+    transform 0.14s var(--trace-ease-out),
+    visibility 0s linear 0s;
+}
+
+/* ── Tooltip Header ───────────────────────────────────────────────────────── */
+
+.trace-tip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.trace-tip-course {
+  font-family: "GeistMono", ui-monospace, "SFMono-Regular", monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: #9ca3af;
+  letter-spacing: 0.04em;
+}
+
+.trace-tip-overall {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.01em;
+}
+
+/* ── Instructor Name ──────────────────────────────────────────────────────── */
+
+.trace-tip-instructor {
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Meta line ────────────────────────────────────────────────────────────── */
+
+.trace-tip-meta {
+  font-size: 11px;
+  color: #9ca3af;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+/* ── Dimension Column Header ──────────────────────────────────────────────── */
+
+.trace-dim-col-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0 4px;
+  font-size: 9px;
+  font-weight: 500;
+  color: #d1d5db;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── Dimension Rows ───────────────────────────────────────────────────────── */
+
+.trace-dim-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.trace-dim-row + .trace-dim-row {
+  border-top: 1px solid #f9fafb;
+}
+
+.trace-dim-label {
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 400;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trace-dim-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.trace-dim-score {
+  color: #111827;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.trace-delta {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 0 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.trace-pos {
+  color: #15803d;
+  background: #f0fdf4;
+}
+
+.trace-neg {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+/* ── Reduced Motion ───────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .trace-badge,
+  .trace-loading,
+  .trace-nodata,
+  .trace-green,
+  .trace-amber,
+  .trace-red {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .trace-badge:hover {
+    transform: none;
+    filter: brightness(0.88);
+  }
+
+  .trace-tooltip {
+    transform: none !important;
+    transition: opacity 0.01ms, visibility 0s !important;
+  }
+
+  .trace-tip-visible {
+    transform: none !important;
+    transition: none !important;
+  }
+}

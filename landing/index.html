@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRACE for NUBanner — Instructor Ratings, Right Where You Register</title>
+  <meta name="description" content="See TRACE instructor ratings directly in NUBanner. Color-coded badges, department comparison, 5 rating dimensions — zero extra steps.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+  <style>
+    /* ── Design Tokens ─────────────────────────────────────────────────────── */
+    :root {
+      --bg:           #07080a;
+      --surface:      #101111;
+      --surface-2:    #1b1c1e;
+      --border:       rgba(255,255,255,0.06);
+      --border-med:   rgba(255,255,255,0.10);
+
+      --text-primary:   #f9f9f9;
+      --text-secondary: #cecece;
+      --text-muted:     #9c9c9d;
+      --text-dim:       #6a6b6c;
+      --text-dark:      #434345;
+
+      --accent:      #FF6363;
+      --accent-glow: hsla(0,100%,69%,0.15);
+      --green:       hsl(151,59%,59%);
+
+      --radius-sm:   6px;
+      --radius-md:   12px;
+      --radius-lg:   16px;
+      --radius-pill: 86px;
+
+      --shadow-ring:
+        rgb(27,28,30) 0px 0px 0px 1px,
+        rgb(7,8,10)   0px 0px 0px 1px inset;
+      --shadow-button:
+        rgba(255,255,255,0.05) 0px 1px 0px 0px inset,
+        rgba(255,255,255,0.25) 0px 0px 0px 1px,
+        rgba(0,0,0,0.2)        0px -1px 0px 0px inset;
+    }
+
+    /* ── Reset & Base ──────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      html { scroll-behavior: smooth; }
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Inter', 'Inter Fallback', system-ui, -apple-system, sans-serif;
+      font-feature-settings: "calt","kern","liga","ss03";
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.60;
+      letter-spacing: 0.2px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ── Typography ────────────────────────────────────────────────────────── */
+    .display-hero {
+      font-size: clamp(40px, 6vw, 64px);
+      font-weight: 600;
+      line-height: 1.10;
+      letter-spacing: 0px;
+      font-feature-settings: "liga" 0, "ss02", "ss08";
+    }
+
+    .display-section {
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 400;
+      line-height: 1.17;
+      letter-spacing: 0.2px;
+    }
+
+    .heading-section {
+      font-size: 24px;
+      font-weight: 500;
+      line-height: normal;
+      letter-spacing: 0.2px;
+    }
+
+    .body-large {
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.65;
+      letter-spacing: 0.2px;
+    }
+
+    .body { font-size: 16px; font-weight: 500; line-height: 1.60; letter-spacing: 0.2px; }
+    .caption { font-size: 14px; font-weight: 500; line-height: 1.14; letter-spacing: 0.2px; }
+    .small { font-size: 12px; font-weight: 600; line-height: 1.33; letter-spacing: 0px; }
+
+    .mono {
+      font-family: 'GeistMono', ui-monospace, 'SFMono-Regular', 'Roboto Mono', 'Menlo', monospace;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.60;
+      letter-spacing: 0.3px;
+    }
+
+    .accent-red { color: var(--accent); }
+    .text-muted  { color: var(--text-muted); }
+
+    /* ── Layout ────────────────────────────────────────────────────────────── */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Navigation ────────────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(7,8,10,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      border-radius: 6px;
+    }
+
+    .nav-logo-mark span {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+      font-feature-settings: "liga" 0;
+    }
+
+    .nav-logo-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.3px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.3px;
+      line-height: 1.4;
+      transition: color 0.15s ease, opacity 0.15s ease;
+    }
+
+    .nav-links a:hover { color: var(--text-primary); }
+
+    /* ── Buttons ───────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      transition: opacity 0.15s ease;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .btn:hover { opacity: 0.6; }
+
+    .btn-primary {
+      background: hsla(0,0%,100%,0.815);
+      color: #18191a;
+      border-radius: var(--radius-pill);
+      padding: 12px 24px;
+      box-shadow: var(--shadow-button);
+    }
+
+    .btn-primary:hover {
+      background: hsl(0,0%,100%);
+      opacity: 1;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-dim);
+      border-radius: var(--radius-pill);
+      padding: 12px 24px;
+      box-shadow: rgba(255,255,255,0.1) 0px 1px 0px 0px inset;
+    }
+
+    .btn-ghost:hover { color: var(--text-primary); opacity: 0.6; }
+
+    .btn-sm { font-size: 14px; padding: 8px 16px; }
+
+    /* ── Hero Section ──────────────────────────────────────────────────────── */
+    .hero {
+      padding: clamp(120px, 14vw, 180px) 0 clamp(64px, 7vw, 96px);
+    }
+
+    .hero-content {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border-med);
+      border-radius: var(--radius-pill);
+      padding: 6px 16px;
+      margin-bottom: 32px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.2px;
+    }
+
+    .hero-eyebrow .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+    }
+
+    .hero h1 {
+      margin-bottom: 24px;
+      color: var(--text-primary);
+    }
+
+    .hero .subtitle {
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 1.60;
+      letter-spacing: 0.2px;
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      max-width: 620px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* ── Preview Window ────────────────────────────────────────────────────── */
+    .preview-section {
+      padding: 40px 0 72px;
+    }
+
+    .browser-window {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      box-shadow:
+        rgb(27,28,30) 0px 0px 0px 1px,
+        rgb(7,8,10)   0px 0px 0px 1px inset,
+        rgba(0,0,0,0.5) 0px 24px 80px;
+      overflow: hidden;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .browser-chrome {
+      background: #1a1b1d;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .browser-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .browser-dots span {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .dot-red   { background: #ff5f57; }
+    .dot-amber { background: #ffbd2e; }
+    .dot-green { background: #28c840; }
+
+    .browser-url {
+      flex: 1;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-family: 'GeistMono', ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.2px;
+    }
+
+    /* ── NUBanner Mock ─────────────────────────────────────────────────────── */
+    .nubanner-mock {
+      background: #ffffff;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .nubanner-header {
+      background: #cc0000;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nu-logo-mock {
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+
+    .nu-header-text {
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 0.5px;
+    }
+
+    .nubanner-toolbar {
+      background: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+      padding: 8px 20px;
+      font-size: 12px;
+      color: #555;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nubanner-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .nubanner-table th {
+      background: #e8e8e8;
+      color: #333;
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      white-space: nowrap;
+    }
+
+    .nubanner-table td {
+      padding: 8px 12px;
+      border: 1px solid #e5e5e5;
+      color: #222;
+      vertical-align: middle;
+    }
+
+    .nubanner-table tr:nth-child(even) td { background: #fafafa; }
+    .nubanner-table tr:hover td { background: #f0f6ff; }
+
+    .nu-instructor-link {
+      color: #0066cc;
+      text-decoration: underline;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* ── TRACE Badges (for mock) ───────────────────────────────────────────── */
+    .trace-badge-mock {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 5px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: default;
+      vertical-align: middle;
+      white-space: nowrap;
+      line-height: 1.45;
+    }
+
+    .badge-green  { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+    .badge-amber  { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+    .badge-red    { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .badge-nodata { background: #f9fafb; color: #9ca3af; border: 1px solid #f3f4f6; font-size: 10px; }
+
+    /* ── Stats Bar ─────────────────────────────────────────────────────────── */
+    .stats-section {
+      padding: 0 0 80px;
+    }
+
+    .stats-bar {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      box-shadow: var(--shadow-ring);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      overflow: hidden;
+    }
+
+    .stat-item {
+      padding: 40px 32px;
+      text-align: center;
+      position: relative;
+    }
+
+    .stat-item + .stat-item::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 20%; bottom: 20%;
+      width: 1px;
+      background: var(--border);
+    }
+
+    .stat-value {
+      font-size: 40px;
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -1px;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.2px;
+    }
+
+    /* ── Section Headers ───────────────────────────────────────────────────── */
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    /* ── How It Works ──────────────────────────────────────────────────────── */
+    .how-section {
+      padding: 112px 0;
+    }
+
+    .how-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-ring);
+    }
+
+    .how-step {
+      background: var(--surface);
+      padding: 40px 32px;
+      position: relative;
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--surface-2);
+      box-shadow: var(--shadow-ring);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      letter-spacing: 0;
+    }
+
+    .step-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      letter-spacing: 0.2px;
+    }
+
+    .step-desc {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      letter-spacing: 0.2px;
+    }
+
+    /* ── Feature Cards ─────────────────────────────────────────────────────── */
+    .features-section {
+      padding: 96px 0;
+    }
+
+    .features-header {
+      max-width: 600px;
+      margin-bottom: 48px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow:
+        rgb(27,28,30) 0px 0px 0px 1px,
+        rgb(7,8,10)   0px 0px 0px 1px inset;
+      transition: border-color 0.2s ease;
+    }
+
+    .feature-card:hover {
+      border-color: var(--border-med);
+    }
+
+    .feature-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      letter-spacing: 0.2px;
+    }
+
+    .feature-desc {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      letter-spacing: 0.2px;
+    }
+
+    .feature-card.accent-card {
+      border-color: rgba(255,99,99,0.2);
+    }
+
+    /* ── Tooltip Anatomy ───────────────────────────────────────────────────── */
+    .tooltip-section {
+      padding: 112px 0;
+    }
+
+    .tooltip-demo-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .tooltip-demo-visual {
+      display: flex;
+      justify-content: center;
+    }
+
+    .tooltip-mock {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 14px 16px 12px;
+      width: 240px;
+      box-shadow:
+        0 4px 24px rgba(0,0,0,0.12),
+        0 1px 6px rgba(0,0,0,0.06);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      position: relative;
+    }
+
+    .tooltip-mock::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 32px;
+      width: 14px;
+      height: 8px;
+      background: #ffffff;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      filter: drop-shadow(0 -1px 0 #e5e7eb);
+    }
+
+    .tt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 2px;
+    }
+
+    .tt-course {
+      font-family: 'GeistMono', ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 500;
+      color: #9ca3af;
+      letter-spacing: 0.04em;
+    }
+
+    .tt-score {
+      font-size: 15px;
+      font-weight: 600;
+      color: #15803d;
+    }
+
+    .tt-instructor {
+      font-size: 12px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 4px;
+    }
+
+    .tt-meta {
+      font-size: 11px;
+      color: #9ca3af;
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .tt-dim-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 3px 0;
+    }
+
+    .tt-dim-row + .tt-dim-row { border-top: 1px solid #f9fafb; }
+
+    .tt-dim-label {
+      color: #6b7280;
+      font-size: 11px;
+      font-weight: 400;
+      flex: 1;
+    }
+
+    .tt-dim-score {
+      color: #111827;
+      font-weight: 600;
+      font-size: 11px;
+      margin-right: 4px;
+    }
+
+    .tt-delta-pos {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 0 4px;
+      border-radius: 3px;
+      color: #15803d;
+      background: #f0fdf4;
+    }
+
+    .tt-delta-neg {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 0 4px;
+      border-radius: 3px;
+      color: #dc2626;
+      background: #fef2f2;
+    }
+
+    /* ── Dimension List ────────────────────────────────────────────────────── */
+    .dim-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .dim-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .dim-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+
+    .dim-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      letter-spacing: 0.2px;
+    }
+
+    .dim-desc {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      letter-spacing: 0.2px;
+    }
+
+    /* ── Trust Section ─────────────────────────────────────────────────────── */
+    .trust-section {
+      padding: 96px 0;
+    }
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-ring);
+      margin-top: 56px;
+    }
+
+    .trust-item {
+      background: var(--surface);
+      padding: 32px;
+    }
+
+    .trust-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0px;
+      margin-bottom: 20px;
+    }
+
+    .trust-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      letter-spacing: 0.2px;
+    }
+
+    .trust-desc {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      letter-spacing: 0.2px;
+    }
+
+    .perm-pill {
+      display: inline-flex;
+      align-items: center;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: 'GeistMono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin: 3px 2px;
+    }
+
+    .perm-pills {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    /* ── CTA Section ───────────────────────────────────────────────────────── */
+    .cta-section {
+      padding: clamp(96px, 12vw, 148px) 0;
+    }
+
+    .cta-inner {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .cta-inner h2 {
+      margin-bottom: 24px;
+    }
+
+    .cta-inner p {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      letter-spacing: 0.2px;
+      margin-bottom: 40px;
+    }
+
+    /* ── Footer ────────────────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-left {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .footer-right {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-right a {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-dim);
+      letter-spacing: 0.4px;
+      transition: color 0.15s ease;
+    }
+
+    .footer-right a:hover { color: var(--text-muted); }
+
+    /* ── Divider ───────────────────────────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* ── Skip Link (screen readers / keyboard) ─────────────────────────────── */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+    .skip-link:focus {
+      position: fixed;
+      top: 0; left: 0;
+      width: auto; height: auto;
+      padding: 12px 24px;
+      background: var(--surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-med);
+      z-index: 10000;
+      font-size: 14px;
+      font-weight: 600;
+      outline: 2px solid var(--accent);
+    }
+
+    /* ── Mobile Nav Toggle ─────────────────────────────────────────────────── */
+    .nav-mobile-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      color: var(--text-primary);
+      border-radius: var(--radius-sm);
+    }
+    .nav-mobile-toggle:hover { background: var(--surface-2); }
+
+    /* Mobile CTA inside nav dropdown — hidden by default (desktop shows nav-cta-desktop) */
+    .nav-mobile-cta { display: none; }
+
+    /* ── Responsive ────────────────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      /* Nav: hide desktop CTA and nav links, show hamburger */
+      .nav-links { display: none; }
+      .nav-mobile-toggle { display: flex; }
+      .nav-cta-desktop { display: none; }
+
+      nav.nav-open .nav-links {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 0; right: 0;
+        background: rgba(7,8,10,0.97);
+        border-bottom: 1px solid var(--border);
+        padding: 16px 24px 20px;
+        gap: 16px;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        z-index: 99;
+      }
+      nav.nav-open .nav-links a { font-size: 17px; color: var(--text-secondary); }
+      nav.nav-open .nav-links li.nav-mobile-cta { display: block; }
+
+      /* Hero */
+      .hero { padding: 100px 0 56px; }
+
+      /* Section padding */
+      .how-section      { padding: 72px 0; }
+      .features-section { padding: 64px 0; }
+      .tooltip-section  { padding: 72px 0; }
+      .trust-section    { padding: 64px 0; }
+      .cta-section      { padding: 80px 0; }
+      .preview-section  { padding: 32px 0 56px; }
+      .stats-section    { padding: 0 0 56px; }
+
+      /* Section sub-spacing */
+      .how-header      { margin-bottom: 40px; }
+      .features-header { margin-bottom: 32px; }
+      .trust-grid      { margin-top: 40px; }
+
+      /* Grid layouts: single column */
+      .stats-bar        { grid-template-columns: 1fr; }
+      .stat-item + .stat-item::before { display: none; }
+      .how-grid         { grid-template-columns: 1fr; }
+      .features-grid    { grid-template-columns: 1fr; }
+      .tooltip-demo-wrap { grid-template-columns: 1fr; gap: 40px; }
+      .trust-grid       { grid-template-columns: 1fr; }
+
+      /* Tighter component padding on mobile */
+      .stat-item  { padding: 28px 24px; }
+      .how-step   { padding: 28px 24px; }
+      .feature-card { padding: 24px; }
+      .trust-item { padding: 24px; }
+
+      /* Touch targets: all buttons min 44px */
+      .btn        { min-height: 44px; }
+      .btn-sm     { min-height: 44px; font-size: 15px; padding: 10px 18px; }
+
+      /* Browser window: smaller radius on mobile */
+      .browser-window { border-radius: var(--radius-sm); }
+
+      /* NUBanner mock: horizontal scroll + scroll hint */
+      .nubanner-mock {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+      }
+
+      /* Footer */
+      .footer-inner { flex-direction: column; gap: 16px; text-align: center; }
+    }
+
+    @media (max-width: 600px) {
+      .display-hero    { font-size: 34px; }
+      .display-section { font-size: 28px; }
+      .hero .subtitle  { font-size: 16px; }
+      .heading-section { font-size: 20px; }
+
+      /* Container padding: slightly tighter on very small screens */
+      .container { padding: 0 16px; }
+    }
+
+    @media (max-width: 400px) {
+      .display-hero    { font-size: 30px; }
+      .hero-eyebrow    { font-size: 12px; padding: 5px 12px; }
+    }
+
+    /* ── Easing tokens ──────────────────────────────────────────────────────── */
+    :root {
+      --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ── Keyframes ──────────────────────────────────────────────────────────── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { box-shadow: 0 0 0 0   rgba(74,222,128,0.5); }
+      60%       { box-shadow: 0 0 0 5px rgba(74,222,128,0); }
+    }
+
+    /* ── Hero entrance choreography ─────────────────────────────────────────── */
+    .hero-animate-1 { animation: fadeInUp 0.65s var(--ease-out-quint) 0.05s both; }
+    .hero-animate-2 { animation: fadeInUp 0.65s var(--ease-out-quint) 0.18s both; }
+    .hero-animate-3 { animation: fadeInUp 0.65s var(--ease-out-quint) 0.30s both; }
+    .hero-animate-4 { animation: fadeInUp 0.65s var(--ease-out-quint) 0.44s both; }
+
+    /* Live status dot pulse */
+    .hero-eyebrow .dot {
+      animation: pulseDot 2.6s ease-in-out infinite;
+    }
+
+    /* ── Scroll-triggered reveals ───────────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.55s var(--ease-out-quint), transform 0.55s var(--ease-out-quint);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    .reveal-stagger > * {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.5s var(--ease-out-quint), transform 0.5s var(--ease-out-quint);
+    }
+    .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0ms; }
+    .reveal-stagger.visible > *:nth-child(2) { transition-delay: 75ms; }
+    .reveal-stagger.visible > *:nth-child(3) { transition-delay: 150ms; }
+    .reveal-stagger.visible > *:nth-child(4) { transition-delay: 225ms; }
+    .reveal-stagger.visible > * {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── Enhanced button states ─────────────────────────────────────────────── */
+    .btn {
+      transition: opacity 0.15s ease, transform 0.12s ease, background 0.15s ease, color 0.15s ease;
+    }
+    .btn:active { transform: scale(0.96); }
+    .btn-primary:hover { transform: scale(1.02); }
+    .btn-primary:active { transform: scale(0.97); }
+
+    /* ── Feature card hover lift ────────────────────────────────────────────── */
+    .feature-card {
+      transition: border-color 0.2s ease, transform 0.22s var(--ease-out-quint);
+    }
+    .feature-card:hover { transform: translateY(-2px); }
+
+    /* ── Nav scroll elevation ───────────────────────────────────────────────── */
+    nav.scrolled {
+      box-shadow: 0 1px 0 var(--border), 0 6px 32px rgba(0,0,0,0.35);
+    }
+
+    /* ── Reduced motion overrides ───────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .hero-animate-1, .hero-animate-2,
+      .hero-animate-3, .hero-animate-4 {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .hero-eyebrow .dot { animation: none !important; }
+      .reveal, .reveal-stagger > * {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+      .btn, .feature-card {
+        transition: opacity 0.1s ease !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- ── Navigation ────────────────────────────────────────────────────────── -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="nav-logo-mark"><span>T</span></div>
+        <span class="nav-logo-text">TRACE</span>
+      </div>
+
+      <ul class="nav-links" id="nav-links-list">
+        <li><a href="#how-it-works">How it works</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#ratings">Ratings</a></li>
+        <li><a href="#trust">Privacy</a></li>
+        <li class="nav-mobile-cta"><a href="#install" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:4px;">Install for Chrome</a></li>
+      </ul>
+
+      <button class="nav-mobile-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="nav-links-list">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <rect x="2" y="5" width="16" height="1.5" rx="0.75" fill="currentColor"/>
+          <rect x="2" y="9.25" width="16" height="1.5" rx="0.75" fill="currentColor"/>
+          <rect x="2" y="13.5" width="16" height="1.5" rx="0.75" fill="currentColor"/>
+        </svg>
+      </button>
+
+      <a href="#install" class="btn btn-primary btn-sm nav-cta-desktop">Install Extension</a>
+    </div>
+  </nav>
+
+  <!-- ── Hero ──────────────────────────────────────────────────────────────── -->
+  <section class="hero" id="main-content">
+    <div class="container">
+      <div class="hero-content">
+
+        <div class="hero-eyebrow hero-animate-1">
+          <span class="dot"></span>
+          Built for Northeastern University students
+        </div>
+
+        <h1 class="display-hero hero-animate-2">
+          TRACE ratings,<br>
+          right <span class="accent-red">where</span> you register.
+        </h1>
+
+        <p class="subtitle hero-animate-3">
+          Stop switching tabs. See instructor TRACE scores directly in NUBanner — color-coded badges,
+          department comparisons, and 5-dimension breakdowns, automatically.
+        </p>
+
+        <div class="hero-ctas hero-animate-4">
+          <a href="#install" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 1v8M5 6l3 3 3-3M2 11v1a2 2 0 002 2h8a2 2 0 002-2v-1" stroke="#18191a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Install for Chrome
+          </a>
+          <a href="#how-it-works" class="btn btn-ghost">See how it works</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Browser Preview ───────────────────────────────────────────────────── -->
+  <section class="preview-section">
+    <div class="container">
+      <div class="browser-window reveal">
+        <!-- Browser chrome -->
+        <div class="browser-chrome">
+          <div class="browser-dots">
+            <span class="dot-red"></span>
+            <span class="dot-amber"></span>
+            <span class="dot-green"></span>
+          </div>
+          <div class="browser-url">nubanner.neu.edu/StudentRegistrationSsb/ssb/classSearch</div>
+        </div>
+
+        <!-- NUBanner Mock -->
+        <div class="nubanner-mock">
+          <!-- NU Header Bar -->
+          <div class="nubanner-header">
+            <span class="nu-logo-mock">NORTHEASTERN</span>
+            <span class="nu-header-text">Student Registration &amp; Records</span>
+          </div>
+
+          <!-- Toolbar -->
+          <div class="nubanner-toolbar">
+            <span>Class Search Results — Spring 2026 · Computer Science</span>
+            <span>Showing 1-8 of 312 sections</span>
+          </div>
+
+          <!-- Table -->
+          <table class="nubanner-table">
+            <thead>
+              <tr>
+                <th>Select</th>
+                <th>CRN</th>
+                <th>Subj</th>
+                <th>Crse</th>
+                <th>Sec</th>
+                <th>Title</th>
+                <th>Credits</th>
+                <th>Instructor</th>
+                <th>Time</th>
+                <th>Location</th>
+                <th>Seats</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="checkbox"></td>
+                <td>12481</td>
+                <td>CS</td>
+                <td>3200</td>
+                <td>01</td>
+                <td>Algorithms &amp; Data</td>
+                <td>4.00</td>
+                <td>
+                  <span class="nu-instructor-link">Kaplan, Harold</span>
+                  <span class="trace-badge-mock badge-green">4.8</span>
+                </td>
+                <td>MWTh 11:45am–1:25pm</td>
+                <td>Shillman 105</td>
+                <td>3 / 60</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"></td>
+                <td>12482</td>
+                <td>CS</td>
+                <td>3200</td>
+                <td>02</td>
+                <td>Algorithms &amp; Data</td>
+                <td>4.00</td>
+                <td>
+                  <span class="nu-instructor-link">Chen, Wei</span>
+                  <span class="trace-badge-mock badge-amber">3.7</span>
+                </td>
+                <td>TuFr 9:50–11:30am</td>
+                <td>Ryder 155</td>
+                <td>18 / 60</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"></td>
+                <td>12510</td>
+                <td>CS</td>
+                <td>4120</td>
+                <td>01</td>
+                <td>Theory of Computation</td>
+                <td>4.00</td>
+                <td>
+                  <span class="nu-instructor-link">Lapets, Andrei</span>
+                  <span class="trace-badge-mock badge-green">4.6</span>
+                </td>
+                <td>MWTh 2:50–4:30pm</td>
+                <td>Forsyth 129</td>
+                <td>0 / 40</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"></td>
+                <td>14203</td>
+                <td>CS</td>
+                <td>4500</td>
+                <td>01</td>
+                <td>Software Development</td>
+                <td>4.00</td>
+                <td>
+                  <span class="nu-instructor-link">Nunez, Gabriel</span>
+                  <span class="trace-badge-mock badge-red">2.9</span>
+                </td>
+                <td>MWTh 8:00–9:40am</td>
+                <td>Ryder 101</td>
+                <td>22 / 50</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"></td>
+                <td>15801</td>
+                <td>CS</td>
+                <td>5800</td>
+                <td>01</td>
+                <td>Algorithms</td>
+                <td>4.00</td>
+                <td>
+                  <span class="nu-instructor-link">Riedl, Martin</span>
+                  <span class="trace-badge-mock badge-nodata">No TRACE</span>
+                </td>
+                <td>TuFr 1:35–3:15pm</td>
+                <td>Churchill 103</td>
+                <td>11 / 35</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"></td>
+                <td>15840</td>
+                <td>CS</td>
+                <td>6140</td>
+                <td>01</td>
+                <td>Machine Learning</td>
+                <td>4.00</td>
+                <td>
+                  <span class="nu-instructor-link">Manzo, Samuele</span>
+                  <span class="trace-badge-mock badge-green">4.9</span>
+                </td>
+                <td>MWTh 11:45am–1:25pm</td>
+                <td>Richards 320</td>
+                <td>5 / 30</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Caption -->
+      <p style="text-align:center; margin-top:24px; font-size:14px; color:var(--text-muted); letter-spacing:0.2px;">
+        TRACE ratings appear automatically next to every instructor in NUBanner. No action required.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Stats Bar ──────────────────────────────────────────────────────────── -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-bar reveal-stagger">
+        <div class="stat-item">
+          <div class="stat-value" data-count="30000" data-suffix="+">30,000+</div>
+          <div class="stat-label">TRACE reports indexed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" data-count="5">5</div>
+          <div class="stat-label">rating dimensions surfaced</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">0</div>
+          <div class="stat-label">extra steps after install</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ── How It Works ───────────────────────────────────────────────────────── -->
+  <section class="how-section" id="how-it-works">
+    <div class="container">
+      <div class="how-header">
+        <div class="section-label">How it works</div>
+        <h2 class="display-section">Three steps.<br>Zero friction.</h2>
+      </div>
+
+      <div class="how-grid reveal-stagger">
+        <div class="how-step">
+          <div class="step-num">01</div>
+          <div class="step-title">Install the extension</div>
+          <p class="step-desc">
+            Add TRACE to Chrome in two clicks. No account, no sign-in, no configuration.
+            The extension activates automatically on NUBanner.
+          </p>
+        </div>
+        <div class="how-step">
+          <div class="step-num">02</div>
+          <div class="step-title">Search courses as usual</div>
+          <p class="step-desc">
+            Open NUBanner and search for courses exactly as you normally would.
+            TRACE listens to the search results in the background, you do nothing different.
+          </p>
+        </div>
+        <div class="how-step">
+          <div class="step-num">03</div>
+          <div class="step-title">See ratings appear</div>
+          <p class="step-desc">
+            Color-coded TRACE badges appear next to every instructor name. Hover for a full
+            breakdown: 5 dimensions, department comparison, and response counts.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ── Features ──────────────────────────────────────────────────────────── -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="features-header">
+        <div class="section-label">Features</div>
+        <h2 class="display-section">More than a score.</h2>
+        <p class="body-large" style="color:var(--text-secondary); margin-top:16px; font-weight:400;">
+          Most students who find TRACE only ever see the overall number. TRACE for NUBanner surfaces the
+          full picture — automatically, in context, at the right moment.
+        </p>
+      </div>
+
+      <div class="features-grid reveal-stagger">
+        <div class="feature-card accent-card">
+          <div class="feature-title">Instant color signal</div>
+          <p class="feature-desc">
+            Green (≥ 4.5), amber (3.5–4.5), red (&lt; 3.5) — a directional judgment
+            before you even read the instructor's name. No mental math required.
+            "No TRACE" shown clearly when data is unavailable.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-title">Department comparison delta</div>
+          <p class="feature-desc">
+            A raw 3.8 is meaningless without context. Each dimension shows a
+            <span style="color:var(--green)">+0.24</span> or <span style="color:var(--accent)">−0.31</span>
+            vs. the department average — so you know if that instructor is above or below the
+            norm for their subject, not just for the university.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-title">Five rating dimensions</div>
+          <p class="feature-desc">
+            TRACE measures more than overall satisfaction. See Teaching Quality, Student Support,
+            Learning Impact, Course Design, and Online Delivery — each with its own score and
+            department delta — in a single hover.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-title">Source confidence</div>
+          <p class="feature-desc">
+            Every badge shows the number of matched TRACE reports and total student responses.
+            A 4.9 from 2 responses is very different from a 4.9 from 280. You see both.
+            No misleading aggregations.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ── Tooltip Anatomy ────────────────────────────────────────────────────── -->
+  <section class="tooltip-section" id="ratings">
+    <div class="container">
+      <div class="tooltip-demo-wrap">
+
+        <!-- Left: Tooltip Visual -->
+        <div class="tooltip-demo-visual">
+          <div class="tooltip-mock reveal">
+            <div class="tt-header">
+              <span class="tt-course">CS3200</span>
+              <span class="tt-score">★ 4.82</span>
+            </div>
+            <div class="tt-instructor">Harold Kaplan</div>
+            <div class="tt-meta">8 reports · 312 responses</div>
+
+            <div class="tt-dim-row">
+              <span class="tt-dim-label">Teaching Quality</span>
+              <span class="tt-dim-score">4.91</span>
+              <span class="tt-delta-pos">+0.42</span>
+            </div>
+            <div class="tt-dim-row">
+              <span class="tt-dim-label">Student Support</span>
+              <span class="tt-dim-score">4.76</span>
+              <span class="tt-delta-pos">+0.28</span>
+            </div>
+            <div class="tt-dim-row">
+              <span class="tt-dim-label">Learning Impact</span>
+              <span class="tt-dim-score">4.85</span>
+              <span class="tt-delta-pos">+0.37</span>
+            </div>
+            <div class="tt-dim-row">
+              <span class="tt-dim-label">Course Design</span>
+              <span class="tt-dim-score">4.71</span>
+              <span class="tt-delta-pos">+0.19</span>
+            </div>
+            <div class="tt-dim-row">
+              <span class="tt-dim-label">Online Delivery</span>
+              <span class="tt-dim-score">4.54</span>
+              <span class="tt-delta-neg">−0.06</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Dimension explanations -->
+        <div>
+          <div class="section-label">What you see on hover</div>
+          <h2 class="display-section" style="margin-bottom:32px;">Every TRACE dimension, decoded.</h2>
+
+          <div class="dim-list reveal-stagger">
+            <div class="dim-item">
+              <div class="dim-dot"></div>
+              <div>
+                <div class="dim-name">Teaching Quality</div>
+                <p class="dim-desc">Clarity of instruction, engagement, and effectiveness of explanations. The most predictive dimension for perceived course value.</p>
+              </div>
+            </div>
+            <div class="dim-item">
+              <div class="dim-dot"></div>
+              <div>
+                <div class="dim-name">Student Support</div>
+                <p class="dim-desc">Accessibility outside class — office hours responsiveness, email turnaround, and willingness to help. Critical for co-op and project-heavy semesters.</p>
+              </div>
+            </div>
+            <div class="dim-item">
+              <div class="dim-dot"></div>
+              <div>
+                <div class="dim-name">Learning Impact</div>
+                <p class="dim-desc">How much students felt they actually learned and grew. Distinct from course enjoyment — a rigorous course can score high here.</p>
+              </div>
+            </div>
+            <div class="dim-item">
+              <div class="dim-dot"></div>
+              <div>
+                <div class="dim-name">Course Design</div>
+                <p class="dim-desc">Structure of assignments, exams, pacing, and alignment between syllabus and actual course content. Predictive of workload consistency.</p>
+              </div>
+            </div>
+            <div class="dim-item">
+              <div class="dim-dot"></div>
+              <div>
+                <div class="dim-name">Online Delivery</div>
+                <p class="dim-desc">Effectiveness of hybrid or asynchronous components — recording quality, online resource organization, and virtual office hours.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ── Trust Section ─────────────────────────────────────────────────────── -->
+  <section class="trust-section" id="trust">
+    <div class="container">
+      <div style="text-align:center; max-width:560px; margin:0 auto;">
+        <div class="section-label">Privacy &amp; safety</div>
+        <h2 class="display-section">No accounts. No tracking.<br>No interference.</h2>
+        <p class="body-large" style="color:var(--text-secondary); margin-top:16px; font-weight:400;">
+          This is a student-built tool for Northeastern students. It is not affiliated with the university.
+          Here is exactly what it does and does not do.
+        </p>
+      </div>
+
+      <div class="trust-grid reveal-stagger">
+        <div class="trust-item">
+          <div class="trust-badge">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6.5L4.5 9l5.5-6" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Read-only
+          </div>
+          <div class="trust-title">Cannot modify your registration</div>
+          <p class="trust-desc">
+            The extension only reads data NUBanner already returns. It cannot add or drop courses,
+            access your student account, or submit any form on your behalf.
+            It is purely additive — badges are overlaid on top of the existing page.
+          </p>
+        </div>
+
+        <div class="trust-item">
+          <div class="trust-badge">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6.5L4.5 9l5.5-6" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Zero data collection
+          </div>
+          <div class="trust-title">Your data stays on your device</div>
+          <p class="trust-desc">
+            No student identity, session token, or personal data is ever transmitted.
+            The only outbound call is a course-and-instructor lookup to the rating API —
+            identical to searching publicly available TRACE data.
+            <br><br>
+            <strong style="color:var(--text-primary);">Chrome permissions used:</strong>
+            <div class="perm-pills">
+              <span class="perm-pill">nubanner.neu.edu</span>
+              <span class="perm-pill">storage</span>
+            </div>
+          </p>
+        </div>
+
+        <div class="trust-item">
+          <div class="trust-badge">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6.5L4.5 9l5.5-6" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            NU data only
+          </div>
+          <div class="trust-title">Official TRACE data, surfaced differently</div>
+          <p class="trust-desc">
+            All ratings come from Northeastern's own TRACE system — the same data you
+            can access manually through the NU portal. TRACE for NUBanner does not
+            create, alter, or editorialize scores. It only puts them where you already are.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ── Install CTA ────────────────────────────────────────────────────────── -->
+  <section class="cta-section" id="install">
+    <div class="container">
+      <div class="cta-inner reveal">
+        <div class="section-label" style="text-align:center;">Get started</div>
+        <h2 class="display-section">Stop guessing.<br>Register with data.</h2>
+        <p>
+          The next add/drop window opens without warning. Install TRACE for NUBanner once —
+          every search automatically shows ratings from that point forward.
+        </p>
+
+        <div style="display:flex; justify-content:center;">
+          <a href="#" class="btn btn-primary" style="font-size:17px; padding:14px 32px;">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 1.5v9M6 7.5l3 3 3-3M2.25 12.75v.75a3 3 0 003 3h7.5a3 3 0 003-3v-.75" stroke="#18191a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Add to Chrome — Free
+          </a>
+        </div>
+
+        <p style="font-size:13px; color:var(--text-dim); margin-top:24px; font-weight:400; letter-spacing:0.2px;">
+          Works on NUBanner · Built by a Husky · Not affiliated with Northeastern University
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <span style="color:var(--text-muted);">TRACE for NUBanner</span>
+          <span style="color:var(--text-dark); margin-left:16px;">A student-built tool for Northeastern University</span>
+        </div>
+        <div class="footer-right">
+          <a href="#">GitHub</a>
+          <a href="#">Privacy</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      // ── Nav mobile toggle ─────────────────────────────────────────────────
+      var toggle = document.querySelector('.nav-mobile-toggle');
+      var nav    = document.querySelector('nav');
+      if (!toggle || !nav) return;
+
+      toggle.addEventListener('click', function () {
+        var isOpen = nav.classList.toggle('nav-open');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        toggle.setAttribute('aria-label', isOpen ? 'Close navigation' : 'Open navigation');
+      });
+
+      nav.querySelectorAll('.nav-links a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          nav.classList.remove('nav-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation');
+        });
+      });
+    })();
+
+    (function () {
+      // Skip all motion if user prefers reduced motion
+      var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // ── Nav scroll elevation ─────────────────────────────────────────────
+      var navEl = document.querySelector('nav');
+      if (navEl) {
+        function updateNavScroll() {
+          navEl.classList.toggle('scrolled', window.scrollY > 10);
+        }
+        window.addEventListener('scroll', updateNavScroll, { passive: true });
+        updateNavScroll();
+      }
+
+      if (prefersReduced || !('IntersectionObserver' in window)) {
+        // Fallback: reveal everything immediately
+        document.querySelectorAll('.reveal, .reveal-stagger').forEach(function (el) {
+          el.classList.add('visible');
+        });
+        return;
+      }
+
+      // ── Scroll-triggered reveals ─────────────────────────────────────────
+      var revealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
+
+      document.querySelectorAll('.reveal, .reveal-stagger').forEach(function (el) {
+        revealObserver.observe(el);
+      });
+
+      // ── Count-up animation ───────────────────────────────────────────────
+      function easeOutQuint(t) { return 1 - Math.pow(1 - t, 5); }
+
+      function animateCount(el, target, suffix, duration) {
+        var start = null;
+        function step(ts) {
+          if (!start) start = ts;
+          var progress = Math.min((ts - start) / duration, 1);
+          var value = Math.round(easeOutQuint(progress) * target);
+          el.textContent = value.toLocaleString() + suffix;
+          if (progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+
+      var countObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            var el = entry.target;
+            var target = parseInt(el.dataset.count, 10);
+            var suffix = el.dataset.suffix || '';
+            var duration = target > 100 ? 1500 : 800;
+            if (!isNaN(target) && target > 0) {
+              animateCount(el, target, suffix, duration);
+            }
+            countObserver.unobserve(el);
+          }
+        });
+      }, { threshold: 0.5 });
+
+      document.querySelectorAll('[data-count]').forEach(function (el) {
+        countObserver.observe(el);
+      });
+    })();
+  </script>
+</body>
+</html>
