@@ -16,7 +16,7 @@
 
   // ── Logger (no-ops in production; set DEBUG=true locally to enable) ─────────
 
-  const DEBUG = false;
+  const DEBUG = true;
 
   function tlog(section) {
     if (!DEBUG) return;
@@ -557,7 +557,7 @@
 
   // ── API Fetch ────────────────────────────────────────────────────────────────
 
-  async function fetchRating(courseCode, displayName) {
+  function fetchRating(courseCode, displayName) {
     // NUBanner: "Witte, Annie" → API expects "Annie Witte" (First Last)
     // Guard: names without a comma (e.g. "TBA", "Staff") pass through as-is
     const parts = displayName.split(",");
@@ -575,33 +575,34 @@
 
     tlog("API", "GET " + url);
 
-    try {
-      const res = await originalFetch(url);
-      tlog(
-        "API",
-        "response status=" +
-          res.status +
-          " for " +
-          courseCode +
-          "/" +
-          instructorQuery,
-      );
-      if (!res.ok) {
-        twarn("API", "non-OK: " + res.status);
-        return null;
+    // MAIN world has no chrome.* APIs. Communicate via DOM custom events:
+    // bridge.js (ISOLATED world) receives the request event, calls
+    // chrome.runtime.sendMessage, then fires the response event back.
+    return new Promise(function (resolve) {
+      var id = courseCode + "::" + instructorQuery + "::" + Date.now();
+
+      function onResponse(e) {
+        if (e.detail.id !== id) return;
+        window.removeEventListener("trace-fetch-response", onResponse);
+        if (e.detail.error || !e.detail.ok) {
+          twarn("API", "non-OK response:", e.detail.status, e.detail.error);
+          resolve(null);
+          return;
+        }
+        tlog(
+          "API",
+          "got rating: overall=" +
+            e.detail.data.overall_rating +
+            ", reports=" +
+            e.detail.data.matched_reports,
+        );
+        resolve(e.detail.data);
       }
-      const data = await res.json();
-      tlog(
-        "API",
-        "got rating: overall=" +
-          data.overall_rating +
-          ", reports=" +
-          data.matched_reports,
+
+      document.addEventListener("trace-fetch-response", onResponse);
+      document.dispatchEvent(
+        new CustomEvent("trace-fetch-request", { detail: { id: id, url: url } })
       );
-      return data;
-    } catch (e) {
-      terr("API", "fetch failed:", e);
-      return null;
-    }
+    });
   }
 })();
