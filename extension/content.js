@@ -6,7 +6,7 @@
 (function TRACE_EXT() {
   "use strict";
 
-  const API_BASE = "https://nutraceblueapi.xyz";
+  const API_BASE = "https://api.nubluetrace.com";
 
   // Cache: "ACCT1201::Witte Annie" → Promise<rating|null>
   const ratingCache = new Map();
@@ -601,7 +601,9 @@
 
       document.addEventListener("trace-fetch-response", onResponse);
       document.dispatchEvent(
-        new CustomEvent("trace-fetch-request", { detail: { id: id, url: url } })
+        new CustomEvent("trace-fetch-request", {
+          detail: { id: id, url: url },
+        }),
       );
     });
   }

@@ -9,7 +9,7 @@
   "permissions": [],
   "host_permissions": [
     "https://nubanner.neu.edu/*",
-    "https://nutraceblueapi.xyz/*"
+    "https://api.nubluetrace.com/*"
   ],
   "content_scripts": [
     {
